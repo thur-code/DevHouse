@@ -1,0 +1,44 @@
+generator client {
+  provider = "prisma-client"
+  output   = "./generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id    String @id @default(uuid())
+  email String @unique
+
+  created_at DateTime  @default(now())
+  updated_at DateTime  @default(now()) @updatedAt
+  houses     House[]
+  reserves   Reserve[]
+}
+
+model House {
+  id          String  @id @default(uuid())
+  thumbnail   String
+  description String
+  price       Int
+  location    String
+  status      Boolean
+
+  user_id String
+  user    User   @relation(fields: [user_id], references: [id])
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+  reserves   Reserve?
+}
+
+model Reserve {
+  id      String @id @default(uuid())
+  date    String
+  user_id String
+  user    User   @relation(fields: [user_id], references: [id])
+
+  house_id String @unique
+  house    House  @relation(fields: [house_id], references: [id])
+}
